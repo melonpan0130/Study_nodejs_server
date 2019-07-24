@@ -8,10 +8,14 @@ html
         ul
             each topic in topics
                 li
-                    a(href="/topic/"+topic)=topic 
+                    a(href="/topic/"+topic.id)=topic.title
                     <!-- 파일의 이름들이 li 태그로 감싸짐-->
         article
-            h2= title
-            =description
+            if topic
+                h2= topic.title
+                =topic.description
+            else
+                h2 Welcome
+                | This is server side javascript tutorial.
         div
             a(href="/topic/new") new

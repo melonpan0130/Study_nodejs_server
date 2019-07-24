@@ -1,5 +1,16 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var multer = require('multer');
+var _storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+var upload = multer({storage: _storage});
+var fs = require('fs');
 
 var mysql = require('mysql');
 var conn = mysql.createConnection({
@@ -8,10 +19,8 @@ var conn = mysql.createConnection({
     password : 'eun01300714',
     database : 'o2'
 });
-
 conn.connect(); // 연결함(시작)
 
-var fs = require('fs');
 var app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.locals.pretty = true;
@@ -33,8 +42,9 @@ app.get('/topic/new', function(req, res) {
 // 2
 app.get(["/topic","/topic/:id"], function(req, res){
     var sql = 'SELECT id, title FROM topic;';
-    conn.query(sql, function(err, rows, fields){
-        res.render('view', {topics:files, title:id, description:data});
+    // sql이 실행된 결과로 function에 들어감
+    conn.query(sql, function(err, topics, fields){
+        res.render('view', {topics:topics});
     });
 
 });
